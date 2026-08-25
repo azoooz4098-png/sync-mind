@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="theme-color" content="#151022">
-<title>توارد | Sync Mind</title>
+<title>توارد بين عبدالعزيز وحبيبته ديم 🤍</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💞</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -78,7 +78,10 @@ input{font-family:inherit;color:inherit}
   background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;
   animation:shimmer 6s linear infinite}
 .logo-sub{letter-spacing:.45em;font-size:.72rem;color:var(--faint);font-weight:700;margin-top:2px}
-.logo-tag{color:var(--dim);margin-top:10px;font-size:.95rem}
+.logo-tag{color:var(--dim);margin-top:12px;font-size:.95rem}
+.logo-dedication{display:inline-block;margin-top:12px;font-family:var(--fd);font-weight:700;font-size:1.12rem;
+  color:#ffdce7;background:rgba(255,93,143,.12);border:1px solid rgba(255,93,143,.3);
+  border-radius:999px;padding:7px 20px;box-shadow:0 6px 22px -10px rgba(255,93,143,.5)}
 .resume-chip{display:none;margin:0 auto 14px;animation:pop .4s ease}
 .resume-chip.on{display:inline-flex}
 
@@ -217,6 +220,7 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:99px;ba
       <div class="logo-emoji">🧠💞</div>
       <h1 class="logo-title h-display">توارد</h1>
       <div class="logo-sub">S Y N C &nbsp; M I N D</div>
+      <div><span class="logo-dedication">بين عبدالعزيز وحبيبته ديم 🤍</span></div>
       <p class="logo-tag">هل تفكرون بنفس الشي فعلاً؟<br>جاوبوا بسرية… واكتشفوا نسبة التخاطر بينكم</p>
     </div>
     <button class="tag resume-chip" id="btn-resume">↩️ الرجوع لغرفتك <b id="resume-pin" style="direction:ltr"></b></button>
@@ -249,8 +253,8 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:99px;ba
     <div class="grow" style="max-height:6vh"></div>
     <div class="stack">
       <div class="h-display center" style="font-size:1.5rem">مين اللاعبين؟</div>
-      <input class="field" id="inp-ln1" maxlength="14" placeholder="اسم اللاعب الأول 🙋‍♂️">
-      <input class="field" id="inp-ln2" maxlength="14" placeholder="اسم اللاعب الثاني 🙋‍♀️">
+      <input class="field" id="inp-ln1" maxlength="14" placeholder="اسم اللاعب الأول 🙋‍♂️" value="عبدالعزيز">
+      <input class="field" id="inp-ln2" maxlength="14" placeholder="اسم اللاعب الثاني 🙋‍♀️" value="ديم 🤍">
       <div class="card">
         <div class="set-row"><span>عدد الجولات</span><div class="seg" id="lseg-rounds"></div></div>
         <div class="set-row"><span>مدة الإجابة</span><div class="seg" id="lseg-timer"></div></div>
@@ -1254,7 +1258,7 @@ $('btn-share-result').onclick = async () => {
   const g = G.room?.game; if (!g) return;
   const pct = g.poss ? Math.round((g.score / g.poss) * 100) : 0;
   const t = syncTitle(pct);
-  const txt = `🧠💞 توارد | Sync Mind\nنسبة التخاطر بيننا: ${pct}٪ — ${t.t}\nتقدرون تتفوقون علينا؟ 😏`;
+  const txt = `توارد بين عبدالعزيز وحبيبته ديم 🤍\nنسبة التخاطر بيننا: ${pct}٪ — ${t.t} 🧠`;
   try {
     if (navigator.share) await navigator.share({ text: txt + '\n' + location.href.split('?')[0] });
     else { await navigator.clipboard.writeText(txt + '\n' + location.href.split('?')[0]); toast('انتسخت النتيجة 📋'); }
@@ -1381,7 +1385,7 @@ function leaveGame(remove) {
 /* share pin */
 function roomLink() { return location.origin + location.pathname + '?pin=' + G.pin; }
 $('btn-share-pin').onclick = async () => {
-  const txt = `تعال نلعب «توارد» 🧠💞\nرمز الغرفة: ${G.pin}\n`;
+  const txt = `توارد بين عبدالعزيز وحبيبته ديم 🤍\nرمز الغرفة: ${G.pin}\n`;
   try {
     if (navigator.share) await navigator.share({ text: txt, url: roomLink() });
     else { await navigator.clipboard.writeText(txt + roomLink()); toast('انتسخ الرابط 📋'); }
