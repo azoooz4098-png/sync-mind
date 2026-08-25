@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#151022">
+<title>توارد | Sync Mind</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💞</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@500;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#151022; --bg2:#1d1530;
+  --card:rgba(255,255,255,.055); --card2:rgba(255,255,255,.09);
+  --line:rgba(255,255,255,.12); --line2:rgba(255,255,255,.2);
+  --ink:#f5f1ff; --dim:#b1a8cc; --faint:#7d739c;
+  --rose:#ff5d8f; --rose2:#ff8fb0; --violet:#8b5cf6; --gold:#ffc466; --teal:#4ed8c3; --bad:#ff7a7a;
+  --grad:linear-gradient(135deg,#ff5d8f,#8b5cf6);
+  --r:22px; --rs:14px;
+  --fd:'Baloo Bhaijaan 2','IBM Plex Sans Arabic',system-ui,sans-serif;
+  --fb:'IBM Plex Sans Arabic','Segoe UI',system-ui,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  font-family:var(--fb); color:var(--ink); background:var(--bg);
+  background-image:
+    radial-gradient(1000px 600px at 85% -10%, rgba(139,92,246,.22), transparent 60%),
+    radial-gradient(800px 500px at -10% 110%, rgba(255,93,143,.16), transparent 60%);
+  background-attachment:fixed;
+  min-height:100dvh; overflow-x:hidden;
+  -webkit-font-smoothing:antialiased; touch-action:manipulation;
+}
+button{font-family:inherit;color:inherit;border:none;background:none;cursor:pointer}
+input{font-family:inherit;color:inherit}
+#app{max-width:520px;margin:0 auto;min-height:100dvh;display:flex;flex-direction:column;
+  padding:calc(env(safe-area-inset-top,0px) + 14px) 18px calc(env(safe-area-inset-bottom,0px) + 18px)}
+.screen{display:none;flex:1;flex-direction:column;animation:fadein .35s ease}
+.screen.on{display:flex}
+@keyframes fadein{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.06)}100%{transform:scale(1);opacity:1}}
+@keyframes pulse{0%,100%{opacity:.35}50%{opacity:1}}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* ---------- shared bits ---------- */
+.h-display{font-family:var(--fd);font-weight:800;line-height:1.15}
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;
+  padding:16px 20px;border-radius:var(--r);font-size:1.05rem;font-weight:700;font-family:var(--fd);
+  transition:transform .12s ease, filter .2s; user-select:none}
+.btn:active{transform:scale(.965)}
+.btn-primary{background:var(--grad);color:#fff;box-shadow:0 8px 24px -8px rgba(255,93,143,.55)}
+.btn-ghost{background:var(--card);border:1px solid var(--line)}
+.btn-gold{background:linear-gradient(135deg,#ffc466,#ff9d5c);color:#3a2405;box-shadow:0 8px 24px -8px rgba(255,196,102,.5)}
+.btn[disabled]{opacity:.4;pointer-events:none}
+.btn-sm{padding:10px 16px;font-size:.92rem;width:auto;border-radius:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+.field{width:100%;background:var(--card);border:1.5px solid var(--line);border-radius:var(--rs);
+  padding:14px 16px;font-size:1.05rem;outline:none;transition:border .2s}
+.field:focus{border-color:var(--violet)}
+.field::placeholder{color:var(--faint)}
+.tag{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:999px;
+  font-size:.8rem;font-weight:700;background:var(--card2);border:1px solid var(--line)}
+.muted{color:var(--dim)} .tiny{font-size:.8rem} .center{text-align:center}
+.grow{flex:1} .row{display:flex;align-items:center;gap:10px}
+.stack{display:flex;flex-direction:column;gap:12px}
+
+/* ---------- top mini bar ---------- */
+.mini-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;min-height:34px}
+.icon-btn{width:38px;height:38px;border-radius:12px;background:var(--card);border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;font-size:1.05rem}
+
+/* ---------- home ---------- */
+.logo-wrap{text-align:center;margin:4vh 0 3vh;animation:floaty 5s ease-in-out infinite}
+.logo-emoji{font-size:4.2rem;filter:drop-shadow(0 10px 24px rgba(255,93,143,.45))}
+.logo-title{font-size:3.4rem;background:linear-gradient(100deg,#ff8fb0,#c4b5fd 60%,#ff8fb0);
+  background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:shimmer 6s linear infinite}
+.logo-sub{letter-spacing:.45em;font-size:.72rem;color:var(--faint);font-weight:700;margin-top:2px}
+.logo-tag{color:var(--dim);margin-top:10px;font-size:.95rem}
+.resume-chip{display:none;margin:0 auto 14px;animation:pop .4s ease}
+.resume-chip.on{display:inline-flex}
+
+/* ---------- join / pin ---------- */
+.pin-input{direction:ltr;text-align:center;font-family:var(--fd);font-weight:800;font-size:2.6rem;
+  letter-spacing:.45em;padding:14px 8px 14px calc(14px - .45em)}
+.pin-display{direction:ltr;font-family:var(--fd);font-weight:800;font-size:3.6rem;letter-spacing:.35em;
+  text-align:center;background:linear-gradient(100deg,#fff,#e9d5ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* ---------- lobby ---------- */
+.players-row{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px}
+.pslot{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 10px;text-align:center;transition:.3s}
+.pslot .pa{font-size:2rem}
+.pslot .pn{font-weight:700;font-family:var(--fd);margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pslot .ps{font-size:.72rem;color:var(--faint)}
+.pslot.ready{border-color:rgba(78,216,195,.5);box-shadow:0 0 0 1px rgba(78,216,195,.25), 0 6px 20px -10px rgba(78,216,195,.4)}
+.pslot.empty{border-style:dashed;opacity:.65}
+.vs-heart{font-size:1.5rem;animation:pulse 1.6s infinite}
+.set-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid var(--line)}
+.set-row:last-child{border-bottom:none}
+.seg{display:flex;background:rgba(0,0,0,.25);border-radius:12px;padding:3px;gap:3px}
+.seg button{padding:7px 13px;border-radius:9px;font-size:.85rem;font-weight:700;color:var(--dim)}
+.seg button.on{background:var(--grad);color:#fff}
+.mode-chips{display:flex;flex-wrap:wrap;gap:8px}
+.mchip{padding:7px 12px;border-radius:999px;font-size:.8rem;font-weight:700;background:var(--card);
+  border:1.5px solid var(--line);color:var(--dim);transition:.2s}
+.mchip.on{background:rgba(139,92,246,.25);border-color:var(--violet);color:#fff}
+.lock-note{font-size:.78rem;color:var(--faint);text-align:center}
+
+/* ---------- game ---------- */
+.game-top{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.round-ind{font-family:var(--fd);font-weight:700;font-size:.9rem;white-space:nowrap}
+.meter{flex:1;height:10px;background:rgba(0,0,0,.3);border-radius:99px;overflow:hidden;border:1px solid var(--line)}
+.meter i{display:block;height:100%;width:0%;background:var(--grad);border-radius:99px;transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.streak{font-size:.85rem;font-weight:800;color:var(--gold);white-space:nowrap;min-width:34px;text-align:left}
+.presence{width:9px;height:9px;border-radius:99px;background:var(--teal);box-shadow:0 0 8px var(--teal)}
+.presence.off{background:var(--bad);box-shadow:none;animation:pulse 1.2s infinite}
+
+.q-card{background:var(--card);border:1px solid var(--line);border-radius:26px;padding:22px 20px;
+  text-align:center;position:relative;overflow:hidden}
+.q-card::before{content:'';position:absolute;inset:0;background:radial-gradient(400px 200px at 50% -60%,rgba(139,92,246,.25),transparent)}
+.q-mode{position:relative;display:inline-flex;gap:6px;align-items:center;font-size:.78rem;font-weight:800;
+  color:var(--rose2);background:rgba(255,93,143,.12);border:1px solid rgba(255,93,143,.3);
+  padding:5px 13px;border-radius:99px;margin-bottom:12px;font-family:var(--fd)}
+.q-text{position:relative;font-family:var(--fd);font-weight:700;font-size:1.45rem;line-height:1.45}
+
+.timer-wrap{display:flex;justify-content:center;margin:16px 0 4px}
+.timer{position:relative;width:74px;height:74px}
+.timer svg{transform:rotate(-90deg)}
+.timer .tnum{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-family:var(--fd);font-weight:800;font-size:1.5rem}
+.timer.hurry .tnum{color:var(--bad)}
+
+.answer-area{margin-top:14px}
+.opt2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.opt-btn{background:var(--card);border:1.5px solid var(--line);border-radius:20px;padding:22px 12px;
+  font-family:var(--fd);font-weight:700;font-size:1.08rem;line-height:1.4;transition:.15s;min-height:96px;
+  display:flex;align-items:center;justify-content:center}
+.opt-btn:active{transform:scale(.96)}
+.opt-btn.sel{background:rgba(139,92,246,.3);border-color:var(--violet);box-shadow:0 0 0 1px var(--violet)}
+.num-widget{text-align:center}
+.num-val{font-family:var(--fd);font-weight:800;font-size:3.2rem;background:linear-gradient(100deg,#ff8fb0,#c4b5fd);
+  -webkit-background-clip:text;background-clip:text;color:transparent;line-height:1.1}
+.num-unit{color:var(--faint);font-size:.85rem;margin-bottom:8px}
+input[type=range]{width:100%;appearance:none;-webkit-appearance:none;height:34px;background:transparent;direction:ltr}
+input[type=range]::-webkit-slider-runnable-track{height:10px;border-radius:99px;background:rgba(0,0,0,.35);border:1px solid var(--line)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:30px;height:30px;border-radius:99px;
+  background:var(--grad);margin-top:-11px;box-shadow:0 4px 14px rgba(255,93,143,.5);border:2.5px solid #fff}
+input[type=range]::-moz-range-track{height:10px;border-radius:99px;background:rgba(0,0,0,.35)}
+input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:99px;background:#ff5d8f;border:2.5px solid #fff}
+
+.wait-box{text-align:center;padding:26px 16px;animation:fadein .3s}
+.wait-emoji{font-size:2.6rem;animation:floaty 2.4s ease-in-out infinite}
+.dots span{display:inline-block;width:7px;height:7px;border-radius:99px;background:var(--rose);margin:0 3px;animation:pulse 1.2s infinite}
+.dots span:nth-child(2){animation-delay:.2s}.dots span:nth-child(3){animation-delay:.4s}
+
+/* ---------- reveal ---------- */
+.rv-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;perspective:900px;margin-top:6px}
+.rv-card{position:relative;height:150px;transform-style:preserve-3d;transition:transform .7s cubic-bezier(.3,1.4,.4,1)}
+.rv-card.flip{transform:rotateY(180deg)}
+.rv-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:20px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:12px;text-align:center}
+.rv-back{background:linear-gradient(145deg,rgba(139,92,246,.35),rgba(255,93,143,.25));border:1px solid var(--line2);font-size:2rem}
+.rv-front{background:var(--card2);border:1px solid var(--line2);transform:rotateY(180deg)}
+.rv-name{font-size:.75rem;color:var(--dim);font-weight:700}
+.rv-ans{font-family:var(--fd);font-weight:800;font-size:1.25rem;line-height:1.3;word-break:break-word;max-height:78px;overflow:hidden}
+.verdict{text-align:center;margin:18px 0 6px;animation:pop .5s ease .65s both}
+.verdict .v-big{font-family:var(--fd);font-weight:800;font-size:1.7rem}
+.verdict .v-pts{margin-top:6px}
+.v-full .v-big{color:var(--teal)} .v-close .v-big{color:var(--gold)} .v-none .v-big{color:var(--bad)}
+
+/* ---------- final ---------- */
+.gauge-wrap{position:relative;width:210px;height:210px;margin:10px auto}
+.gauge-wrap svg{transform:rotate(-90deg)}
+.gauge-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.gauge-pct{font-family:var(--fd);font-weight:800;font-size:3.2rem;line-height:1}
+.gauge-lbl{font-size:.75rem;color:var(--faint);letter-spacing:.2em;font-weight:700}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 8px;text-align:center}
+.stat b{font-family:var(--fd);font-size:1.3rem;display:block}
+.stat span{font-size:.72rem;color:var(--faint)}
+.rw-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;perspective:800px}
+.rw-card{position:relative;height:130px;transform-style:preserve-3d;transition:transform .7s cubic-bezier(.3,1.4,.4,1);cursor:pointer}
+.rw-card.flip{transform:rotateY(180deg)}
+.rw-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:16px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:8px;text-align:center}
+.rw-back{background:linear-gradient(145deg,rgba(255,196,102,.3),rgba(255,93,143,.22));border:1px solid rgba(255,196,102,.4);font-size:1.7rem}
+.rw-front{background:var(--card2);border:1px solid rgba(255,196,102,.5);transform:rotateY(180deg)}
+.rw-front b{font-family:var(--fd);font-size:.82rem;color:var(--gold)}
+.rw-front span{font-size:.62rem;color:var(--dim);line-height:1.45}
+.locked-note{text-align:center;color:var(--faint);font-size:.85rem;padding:14px;border:1.5px dashed var(--line);border-radius:16px}
+
+/* ---------- handoff ---------- */
+#s-handoff{justify-content:center;text-align:center}
+.hand-emoji{font-size:5rem;animation:floaty 2.5s ease-in-out infinite}
+
+/* ---------- toast & fx ---------- */
+#toast{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 24px);left:50%;transform:translateX(-50%) translateY(80px);
+  background:#2a2140;border:1px solid var(--line2);color:#fff;padding:12px 22px;border-radius:99px;
+  font-size:.9rem;font-weight:700;opacity:0;transition:.35s;z-index:60;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:50}
+.hidden{display:none !important}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ================= HOME ================= -->
+  <section class="screen on" id="s-home">
+    <div class="mini-bar">
+      <button class="icon-btn" id="btn-sound" title="الصوت">🔊</button>
+      <span class="tag" id="net-badge">⚡ تزامن لحظي</span>
+    </div>
+    <div class="logo-wrap">
+      <div class="logo-emoji">🧠💞</div>
+      <h1 class="logo-title h-display">توارد</h1>
+      <div class="logo-sub">S Y N C &nbsp; M I N D</div>
+      <p class="logo-tag">هل تفكرون بنفس الشي فعلاً؟<br>جاوبوا بسرية… واكتشفوا نسبة التخاطر بينكم</p>
+    </div>
+    <button class="tag resume-chip" id="btn-resume">↩️ الرجوع لغرفتك <b id="resume-pin" style="direction:ltr"></b></button>
+    <div class="stack">
+      <input class="field" id="inp-name" maxlength="14" placeholder="وش اسمك؟ ✍️">
+      <button class="btn btn-primary" id="btn-create">🔑 أنشئ غرفة جديدة</button>
+      <button class="btn btn-ghost" id="btn-goto-join">📲 عندي رمز غرفة</button>
+      <button class="btn btn-ghost" id="btn-local">🤝 جوال واحد نتناوب عليه</button>
+    </div>
+    <div class="grow"></div>
+    <p class="center tiny" style="color:var(--faint);margin-top:18px">لعبة ثنائية · جولات سريعة · مكافآت لمن يتخاطر 💝</p>
+  </section>
+
+  <!-- ================= JOIN ================= -->
+  <section class="screen" id="s-join">
+    <div class="mini-bar"><button class="icon-btn" data-back="s-home">→</button><span class="tag">الانضمام لغرفة</span></div>
+    <div class="grow" style="max-height:8vh"></div>
+    <div class="stack center">
+      <div class="h-display" style="font-size:1.6rem">اكتب رمز الغرفة 🔑</div>
+      <p class="muted tiny">اطلب الرمز المكوّن من ٤ أرقام من شريكك</p>
+      <input class="field pin-input" id="inp-pin" type="tel" inputmode="numeric" maxlength="4" placeholder="0000" autocomplete="one-time-code">
+      <button class="btn btn-primary" id="btn-join">دخول الغرفة</button>
+      <p class="tiny" id="join-err" style="color:var(--bad);min-height:1.2em"></p>
+    </div>
+  </section>
+
+  <!-- ================= LOCAL NAMES ================= -->
+  <section class="screen" id="s-local">
+    <div class="mini-bar"><button class="icon-btn" data-back="s-home">→</button><span class="tag">🤝 جوال واحد</span></div>
+    <div class="grow" style="max-height:6vh"></div>
+    <div class="stack">
+      <div class="h-display center" style="font-size:1.5rem">مين اللاعبين؟</div>
+      <input class="field" id="inp-ln1" maxlength="14" placeholder="اسم اللاعب الأول 🙋‍♂️">
+      <input class="field" id="inp-ln2" maxlength="14" placeholder="اسم اللاعب الثاني 🙋‍♀️">
+      <div class="card">
+        <div class="set-row"><span>عدد الجولات</span><div class="seg" id="lseg-rounds"></div></div>
+        <div class="set-row"><span>مدة الإجابة</span><div class="seg" id="lseg-timer"></div></div>
+        <div class="set-row" style="flex-direction:column;align-items:stretch;gap:8px"><span>أنماط الأسئلة</span><div class="mode-chips" id="lmode-chips"></div></div>
+      </div>
+      <button class="btn btn-primary" id="btn-local-start">ابدأوا التحدي 🚀</button>
+    </div>
+  </section>
+
+  <!-- ================= LOBBY ================= -->
+  <section class="screen" id="s-lobby">
+    <div class="mini-bar"><button class="icon-btn" id="btn-leave-lobby">✕</button><span class="tag">غرفة الانتظار</span></div>
+    <div class="stack">
+      <div class="card center" style="padding:20px">
+        <div class="tiny muted">رمز الغرفة</div>
+        <div class="pin-display" id="lobby-pin">0000</div>
+        <div class="row" style="justify-content:center;margin-top:10px">
+          <button class="btn btn-ghost btn-sm" id="btn-share-pin">📤 شارك الرابط</button>
+          <button class="btn btn-ghost btn-sm" id="btn-copy-pin">📋 نسخ الرمز</button>
+        </div>
+      </div>
+      <div class="players-row">
+        <div class="pslot" id="slot-p1"><div class="pa">🙋‍♂️</div><div class="pn">—</div><div class="ps">…</div></div>
+        <div class="vs-heart">💞</div>
+        <div class="pslot empty" id="slot-p2"><div class="pa">⏳</div><div class="pn">بانتظاره</div><div class="ps">شارك الرمز</div></div>
+      </div>
+      <div class="card" id="lobby-settings">
+        <div class="set-row"><span>عدد الجولات</span><div class="seg" id="seg-rounds"></div></div>
+        <div class="set-row"><span>مدة الإجابة</span><div class="seg" id="seg-timer"></div></div>
+        <div class="set-row" style="flex-direction:column;align-items:stretch;gap:8px"><span>أنماط الأسئلة</span><div class="mode-chips" id="mode-chips"></div></div>
+      </div>
+      <p class="lock-note hidden" id="guest-note">الإعدادات بيد منشئ الغرفة 🤍</p>
+      <button class="btn btn-primary" id="btn-start" disabled>بانتظار انضمام شريكك…</button>
+    </div>
+  </section>
+
+  <!-- ================= GAME ================= -->
+  <section class="screen" id="s-game">
+    <div class="mini-bar">
+      <button class="icon-btn" id="btn-exit-game">✕</button>
+      <div class="row"><span class="tiny muted" id="partner-name-top"></span><span class="presence" id="presence"></span></div>
+    </div>
+    <div class="game-top">
+      <span class="round-ind" id="round-ind">١ / ١٠</span>
+      <div class="meter"><i id="meter-fill"></i></div>
+      <span class="streak" id="streak-ind"></span>
+    </div>
+    <div class="q-card">
+      <span class="q-mode" id="q-mode">🎯</span>
+      <div class="q-text" id="q-text">…</div>
+    </div>
+    <p class="center tiny hidden" id="partner-answered" style="color:var(--teal);font-weight:700;margin-top:10px"></p>
+    <div class="timer-wrap">
+      <div class="timer" id="timer">
+        <svg width="74" height="74" viewBox="0 0 74 74">
+          <circle cx="37" cy="37" r="32" fill="none" stroke="rgba(255,255,255,.09)" stroke-width="6"/>
+          <circle id="timer-arc" cx="37" cy="37" r="32" fill="none" stroke="url(#tg)" stroke-width="6" stroke-linecap="round" stroke-dasharray="201" stroke-dashoffset="0"/>
+          <defs><linearGradient id="tg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#ff5d8f"/><stop offset="1" stop-color="#8b5cf6"/>
+          </linearGradient></defs>
+        </svg>
+        <div class="tnum" id="timer-num">20</div>
+      </div>
+    </div>
+    <div class="answer-area" id="answer-area">
+      <div id="w-word" class="stack hidden">
+        <input class="field" id="inp-word" maxlength="40" placeholder="اكتب إجابتك بسرية… 🤫" autocomplete="off">
+        <button class="btn btn-primary" id="btn-send-word">إرسال 🔒</button>
+      </div>
+      <div id="w-choice" class="opt2 hidden">
+        <button class="opt-btn" id="opt-a"></button>
+        <button class="opt-btn" id="opt-b"></button>
+      </div>
+      <div id="w-num" class="num-widget stack hidden">
+        <div><span class="num-val" id="num-val">5</span><div class="num-unit" id="num-unit"></div></div>
+        <input type="range" id="inp-range" min="0" max="10" step="1" value="5">
+        <button class="btn btn-primary" id="btn-send-num">إرسال 🔒</button>
+      </div>
+      <div id="w-wait" class="wait-box hidden">
+        <div class="wait-emoji">🤫</div>
+        <p style="font-weight:700;font-family:var(--fd);margin-top:8px">تمت الإجابة!</p>
+        <p class="muted tiny" id="wait-msg" style="margin-top:4px">بانتظار شريكك…</p>
+        <div class="dots" style="margin-top:10px"><span></span><span></span><span></span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= REVEAL ================= -->
+  <section class="screen" id="s-reveal">
+    <div class="game-top" style="margin-top:14px">
+      <span class="round-ind" id="rv-round-ind"></span>
+      <div class="meter"><i id="rv-meter-fill"></i></div>
+      <span class="streak" id="rv-streak-ind"></span>
+    </div>
+    <div class="card center" style="padding:14px"><div class="tiny muted">السؤال</div><div style="font-family:var(--fd);font-weight:700;font-size:1.05rem;margin-top:4px" id="rv-q"></div></div>
+    <div class="rv-cards">
+      <div class="rv-card" id="rv-c1">
+        <div class="rv-face rv-back">🎴</div>
+        <div class="rv-face rv-front"><div class="rv-name" id="rv-n1"></div><div class="rv-ans" id="rv-a1"></div></div>
+      </div>
+      <div class="rv-card" id="rv-c2">
+        <div class="rv-face rv-back">🎴</div>
+        <div class="rv-face rv-front"><div class="rv-name" id="rv-n2"></div><div class="rv-ans" id="rv-a2"></div></div>
+      </div>
+    </div>
+    <div class="verdict" id="verdict"><div class="v-big" id="v-big"></div><div class="v-pts" id="v-pts"></div></div>
+    <div class="grow"></div>
+    <button class="btn btn-primary" id="btn-next">الجولة الجاية ←</button>
+    <p class="center tiny muted" id="next-hint" style="margin-top:8px;min-height:1.2em"></p>
+  </section>
+
+  <!-- ================= FINAL ================= -->
+  <section class="screen" id="s-final">
+    <div class="mini-bar"><button class="icon-btn" id="btn-final-home">✕</button><span class="tag">النتيجة النهائية</span></div>
+    <div class="center">
+      <div class="gauge-wrap">
+        <svg width="210" height="210" viewBox="0 0 210 210">
+          <circle cx="105" cy="105" r="88" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="14"/>
+          <circle id="gauge-arc" cx="105" cy="105" r="88" fill="none" stroke="url(#gg)" stroke-width="14" stroke-linecap="round" stroke-dasharray="553" stroke-dashoffset="553"/>
+          <defs><linearGradient id="gg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#ff5d8f"/><stop offset=".6" stop-color="#8b5cf6"/><stop offset="1" stop-color="#4ed8c3"/>
+          </linearGradient></defs>
+        </svg>
+        <div class="gauge-center"><div class="gauge-pct" id="gauge-pct">0%</div><div class="gauge-lbl">مؤشر التخاطر</div></div>
+      </div>
+      <h2 class="h-display" id="final-title" style="font-size:1.8rem"></h2>
+      <p class="muted" id="final-sub" style="margin-top:6px;font-size:.95rem"></p>
+    </div>
+    <div class="stats-grid" style="margin-top:18px">
+      <div class="stat"><b id="st-full">0</b><span>توارد كامل 🎯</span></div>
+      <div class="stat"><b id="st-close">0</b><span>إجابات قريبة 👀</span></div>
+      <div class="stat"><b id="st-best">0</b><span>أطول سلسلة 🔥</span></div>
+    </div>
+    <div class="stack" style="margin-top:18px">
+      <div class="card" id="rewards-box">
+        <div class="row" style="justify-content:center;margin-bottom:12px"><span class="tag" style="color:var(--gold)">🎁 بطاقات الامتياز</span></div>
+        <div id="rewards-area"></div>
+      </div>
+      <button class="btn btn-gold" id="btn-rematch">🔁 جولة ثانية بنفس الغرفة</button>
+      <button class="btn btn-ghost" id="btn-share-result">📤 شارك النتيجة</button>
+    </div>
+  </section>
+
+  <!-- ================= HANDOFF (local mode) ================= -->
+  <section class="screen" id="s-handoff">
+    <div class="hand-emoji">🙈</div>
+    <h2 class="h-display" style="font-size:1.9rem;margin-top:18px">سلّم الجوال إلى<br><span id="handoff-name" style="color:var(--rose2)"></span></h2>
+    <p class="muted" style="margin-top:10px">لا تطالع إجابة شريكك! 👀🚫</p>
+    <div style="margin-top:26px"><button class="btn btn-primary" id="btn-handoff-ok" style="max-width:280px;margin:0 auto">الجوال معي، كمّل ✋</button></div>
+  </section>
+
+</div>
+<div id="toast"></div>
+<canvas id="fx"></canvas>
+<script>
+/* ============================================================
+   توارد — Sync Mind | Core logic: matching + question bank
+   Pure functions, no DOM. Works in browser and Node (for tests).
+   ============================================================ */
+
+// ---------- Arabic text normalization ----------
+function normalizeAr(input) {
+  if (input == null) return '';
+  let s = String(input).toLowerCase().trim();
+  // Arabic-Indic digits -> Latin
+  s = s.replace(/[٠-٩]/g, d => String(d.charCodeAt(0) - 0x0660));
+  s = s.replace(/[۰-۹]/g, d => String(d.charCodeAt(0) - 0x06F0));
+  // remove tashkeel/diacritics + tatweel
+  s = s.replace(/[ً-ٰٟـؐ-ؚۖ-ۭ]/g, '');
+  // unify hamza/alef forms
+  s = s.replace(/[أإآٱ]/g, 'ا').replace(/ؤ/g, 'و').replace(/ئ/g, 'ي').replace(/ء/g, '');
+  // taa marbuta -> haa, alef maqsura -> yaa
+  s = s.replace(/ة/g, 'ه').replace(/ى/g, 'ي');
+  // punctuation & symbols -> space
+  s = s.replace(/[^\p{L}\p{N}\s]/gu, ' ');
+  // strip definite article "ال" at start of each word (incl. وال/بال/فال/كال/لل)
+  s = s.split(/\s+/).map(w => {
+    let x = w;
+    x = x.replace(/^(وال|بال|فال|كال|هال)(?=.{2,})/, '');
+    x = x.replace(/^لل(?=.{2,})/, '');
+    x = x.replace(/^ال(?=.{2,})/, '');
+    return x;
+  }).join(' ');
+  // collapse spaces
+  s = s.replace(/\s+/g, ' ').trim();
+  return s;
+}
+
+// ---------- Levenshtein distance ----------
+function levenshtein(a, b) {
+  a = String(a); b = String(b);
+  const m = a.length, n = b.length;
+  if (!m) return n; if (!n) return m;
+  let prev = new Array(n + 1), cur = new Array(n + 1);
+  for (let j = 0; j <= n; j++) prev[j] = j;
+  for (let i = 1; i <= m; i++) {
+    cur[0] = i;
+    const ca = a.charCodeAt(i - 1);
+    for (let j = 1; j <= n; j++) {
+      const cost = (ca === b.charCodeAt(j - 1)) ? 0 : 1;
+      cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + cost);
+    }
+    [prev, cur] = [cur, prev];
+  }
+  return prev[n];
+}
+
+function similarity(a, b) {
+  const L = Math.max(a.length, b.length);
+  if (!L) return 1;
+  return 1 - levenshtein(a, b) / L;
+}
+
+// ---------- Free-text matching (tier: 1 = full, 0.5 = close, 0 = none) ----------
+function textMatch(rawA, rawB) {
+  const a = normalizeAr(rawA), b = normalizeAr(rawB);
+  if (!a || !b) return { tier: 0, sim: 0 };
+  if (a === b) return { tier: 1, sim: 1 };
+  // token containment: one answer's words all inside the other's
+  const ta = a.split(' '), tb = b.split(' ');
+  const setA = new Set(ta), setB = new Set(tb);
+  const subset = (s1, s2) => [...s1].every(w => s2.has(w));
+  if (subset(setA, setB) || subset(setB, setA)) return { tier: 1, sim: 0.95 };
+  // levenshtein tolerance relative to length
+  const dist = levenshtein(a, b);
+  const L = Math.max(a.length, b.length);
+  const tol = Math.max(1, Math.round(L * 0.25));
+  const sim = 1 - dist / L;
+  if (dist <= tol) return { tier: 1, sim };
+  // token-level fuzzy: any word pair nearly equal (for multi-word answers)
+  for (const wa of ta) for (const wb of tb) {
+    if (wa.length >= 3 && wb.length >= 3) {
+      const d = levenshtein(wa, wb);
+      if (d <= Math.max(1, Math.round(Math.max(wa.length, wb.length) * 0.2))) {
+        return { tier: 0.5, sim: Math.max(sim, 0.6) };
+      }
+    }
+  }
+  if (sim >= 0.55) return { tier: 0.5, sim };
+  return { tier: 0, sim };
+}
+
+// ---------- Number matching ----------
+function numberMatch(a, b, min, max) {
+  if (a == null || b == null || isNaN(a) || isNaN(b)) return { tier: 0, diff: null };
+  a = Number(a); b = Number(b);
+  const range = Math.max(1, max - min);
+  const diff = Math.abs(a - b);
+  if (diff === 0) return { tier: 1, diff };
+  if (diff <= Math.max(1, Math.round(range * 0.15))) return { tier: 0.5, diff };
+  return { tier: 0, diff };
+}
+
+// ---------- Choice matching (this-or-that / who-most) ----------
+function choiceMatch(a, b) {
+  if (a == null || b == null || a === '' || b === '') return { tier: 0 };
+  return { tier: a === b ? 1 : 0 };
+}
+
+/* ============================================================
+   Question bank
+   type: 'tot' this-or-that | 'wml' who-most-likely | 'num' | 'word'
+   {p1} / {p2} are replaced with player names at render time.
+   ============================================================ */
+const QUESTIONS = [
+  // ---------- هذا أو ذاك (this or that) ----------
+  { id: 'tot01', type: 'tot', q: 'وش نختار الليلة؟', a: 'عشاء بيت 🍳', b: 'مطعم 🍽️' },
+  { id: 'tot02', type: 'tot', q: 'سفرتنا الجاية؟', a: 'استرخاء وراحة 🏖️', b: 'استكشاف ومغامرة 🧭' },
+  { id: 'tot03', type: 'tot', q: 'المزاج الرسمي للبيت؟', a: 'قهوة ☕', b: 'شاي 🫖' },
+  { id: 'tot04', type: 'tot', q: 'طلعة نهاية الأسبوع؟', a: 'بحر 🌊', b: 'برّ 🏜️' },
+  { id: 'tot05', type: 'tot', q: 'سهرتنا المفضلة؟', a: 'فيلم 🎬', b: 'مسلسل 📺' },
+  { id: 'tot06', type: 'tot', q: 'الجو اللي نعشقه؟', a: 'مطر وغيم 🌧️', b: 'شمس وصحو ☀️' },
+  { id: 'tot07', type: 'tot', q: 'وجبة سريعة ونحبها؟', a: 'برجر 🍔', b: 'شاورما 🌯' },
+  { id: 'tot08', type: 'tot', q: 'أفضل توقيت للمشوار؟', a: 'عصر 🌇', b: 'بعد العشاء 🌙' },
+  { id: 'tot09', type: 'tot', q: 'حلا اليوم؟', a: 'آيس كريم 🍦', b: 'كنافة 🧡' },
+  { id: 'tot10', type: 'tot', q: 'السفر الأحلى؟', a: 'مخطط له بدقة 🗓️', b: 'عشوائي وفجأة 🎲' },
+  { id: 'tot11', type: 'tot', q: 'فطور يوم الجمعة؟', a: 'بيت العائلة 🏠', b: 'كافيه ثنائي 🥐' },
+  { id: 'tot12', type: 'tot', q: 'شتاء ولا صيف؟', a: 'شتاء 🧣', b: 'صيف 🕶️' },
+  { id: 'tot13', type: 'tot', q: 'التسوق الأريح؟', a: 'أونلاين 📦', b: 'محلات ومولات 🛍️' },
+  { id: 'tot14', type: 'tot', q: 'جلستنا المثالية؟', a: 'هدوء وسوالف 🕯️', b: 'ونسة وضحك 🎉' },
+  { id: 'tot15', type: 'tot', q: 'مشوار الليلة بدون تخطيط؟', a: 'مشي وكوفي 🚶', b: 'سينما 🍿' },
+  { id: 'tot16', type: 'tot', q: 'بيت الأحلام؟', a: 'شقة بالمدينة 🏙️', b: 'استراحة وهدوء 🌳' },
+  { id: 'tot17', type: 'tot', q: 'القهوة الأقرب لقلبنا؟', a: 'عربية بالهيل ☕', b: 'لاتيه وسبانش 🥤' },
+  { id: 'tot18', type: 'tot', q: 'عزيمتنا المفضلة؟', a: 'مندي ومظبي 🍖', b: 'بيتزا وباستا 🍕' },
+  { id: 'tot19', type: 'tot', q: 'لو نربح إجازة أسبوع؟', a: 'داخل السعودية 🇸🇦', b: 'خارجها ✈️' },
+  { id: 'tot20', type: 'tot', q: 'ليلة نهاية الأسبوع؟', a: 'سهرة برا 🌃', b: 'بيجامة وبيت 🛋️' },
+
+  // ---------- مين فينا؟ (who is most likely) ----------
+  { id: 'wml01', type: 'wml', q: 'مين يخطط للرحلات بدقة أكثر؟' },
+  { id: 'wml02', type: 'wml', q: 'مين يضيع وقت أطول بالتسوق؟' },
+  { id: 'wml03', type: 'wml', q: 'مين ينسى وين حط مفاتيحه؟' },
+  { id: 'wml04', type: 'wml', q: 'مين يطول أكثر عشان يجهز للطلعة؟' },
+  { id: 'wml05', type: 'wml', q: 'مين أول واحد يجوع؟' },
+  { id: 'wml06', type: 'wml', q: 'مين يعصب أسرع… بس يرضى أسرع؟' },
+  { id: 'wml07', type: 'wml', q: 'مين أكثر واحد ماسك جواله؟' },
+  { id: 'wml08', type: 'wml', q: 'مين ينام أول ما يمسك المخدة؟' },
+  { id: 'wml09', type: 'wml', q: 'مين أول من يعتذر بعد الزعل؟' },
+  { id: 'wml10', type: 'wml', q: 'مين يصرف أكثر بدون ما يحس؟' },
+  { id: 'wml11', type: 'wml', q: 'مين يضحك على أتفه الأشياء؟' },
+  { id: 'wml12', type: 'wml', q: 'مين اللي يقرر وين نتعشى دايم؟' },
+  { id: 'wml13', type: 'wml', q: 'مين أكثر واحد يحفظ المناسبات والتواريخ؟' },
+  { id: 'wml14', type: 'wml', q: 'مين الدلوع بالعلاقة؟ 😄' },
+  { id: 'wml15', type: 'wml', q: 'مين ممكن يضيع وهو مفتح قوقل ماب؟ 🗺️' },
+  { id: 'wml16', type: 'wml', q: 'مين يسولف أكثر بالمشوار؟' },
+  { id: 'wml17', type: 'wml', q: 'مين أنظم وأرتب؟' },
+  { id: 'wml18', type: 'wml', q: 'مين يبرد بسرعة ويدور الشماغ/الشال؟ 🥶' },
+  { id: 'wml19', type: 'wml', q: 'مين أول من يقول «يلا نطلع»؟' },
+  { id: 'wml20', type: 'wml', q: 'مين لو صار فيه زومبي… يضحي بالثاني؟ 🧟😂' },
+
+  // ---------- تقدير رقمي (number sync) ----------
+  { id: 'num01', type: 'num', q: 'من ٠ إلى ١٠: كم نسبة حبنا للهدوء؟', min: 0, max: 10, unit: '/١٠' },
+  { id: 'num02', type: 'num', q: 'كم كوب قهوة نشرب إحنا الاثنين بالأسبوع؟', min: 0, max: 40, unit: 'كوب' },
+  { id: 'num03', type: 'num', q: 'من ٠ إلى ١٠: كم مستوى رومانسيتنا هالفترة؟', min: 0, max: 10, unit: '/١٠' },
+  { id: 'num04', type: 'num', q: 'كم مشوار نطلع تقريباً بالأسبوع؟', min: 0, max: 14, unit: 'مشوار' },
+  { id: 'num05', type: 'num', q: 'كم دقيقة يحتاج {p2} عشان يجهز للطلعة؟ 😏', min: 5, max: 90, unit: 'دقيقة' },
+  { id: 'num06', type: 'num', q: 'من ٠ إلى ١٠: كم حبنا للمغامرة والتجارب الجديدة؟', min: 0, max: 10, unit: '/١٠' },
+  { id: 'num07', type: 'num', q: 'كم ساعة النوم المثالية عندنا؟', min: 4, max: 12, unit: 'ساعة' },
+  { id: 'num08', type: 'num', q: 'من ٠ إلى ١٠: كم نتفق على اختيار الأكل بدون نقاش؟', min: 0, max: 10, unit: '/١٠' },
+  { id: 'num09', type: 'num', q: 'كم مكالمة/رسالة نتواصل فيها باليوم تقريباً؟', min: 0, max: 50, unit: 'مرة' },
+  { id: 'num10', type: 'num', q: 'من ٠ إلى ١٠: كم مزاجنا نفتح مشروع سفر قريب؟', min: 0, max: 10, unit: '/١٠' },
+
+  // ---------- توارد كلمات (word telepathy — free text) ----------
+  { id: 'wrd01', type: 'word', q: 'أول أكلة تجيك ببالك الحين… اكتبها!' },
+  { id: 'wrd02', type: 'word', q: 'مدينة نحلم نزورها مع بعض؟' },
+  { id: 'wrd03', type: 'word', q: 'لو أقول «بيت»… وش أول كلمة تجيك؟' },
+  { id: 'wrd04', type: 'word', q: 'مطعمنا اللي ما نختلف عليه أبداً؟' },
+  { id: 'wrd05', type: 'word', q: 'لون يمثل علاقتنا؟' },
+  { id: 'wrd06', type: 'word', q: 'مشروبنا الرسمي كثنائي؟' },
+  { id: 'wrd07', type: 'word', q: 'حيوان لو نربيه وش يكون؟' },
+  { id: 'wrd08', type: 'word', q: 'أكثر كلمة نكررها باليوم؟' },
+  { id: 'wrd09', type: 'word', q: 'فاكهة الصيف اللي ما نستغنى عنها؟' },
+  { id: 'wrd10', type: 'word', q: 'لو نفتح مشروع صغير مع بعض… وش يكون؟' },
+  { id: 'wrd11', type: 'word', q: 'وجهة شهر العسل الثاني؟ ✈️' },
+  { id: 'wrd12', type: 'word', q: 'أول شي نسويه إذا دخلنا الفندق بالسفر؟ 😂' },
+  { id: 'wrd13', type: 'word', q: 'اسم شخص مشهور يطلع بسوالفنا كثير؟' },
+  { id: 'wrd14', type: 'word', q: 'الأكلة اللي تجمعنا وقت البرد؟' },
+  { id: 'wrd15', type: 'word', q: 'لو علاقتنا لها أغنية/شيلة… لمين تكون؟' },
+];
+
+// ---------- Seeded shuffle + round order ----------
+function mulberry32(seed) {
+  let t = seed >>> 0;
+  return function () {
+    t += 0x6D2B79F5;
+    let r = Math.imul(t ^ (t >>> 15), 1 | t);
+    r ^= r + Math.imul(r ^ (r >>> 7), 61 | r);
+    return ((r ^ (r >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function shuffled(arr, rnd) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(rnd() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/**
+ * Build the ordered list of question ids for a game.
+ * Interleaves enabled modes so consecutive rounds vary.
+ */
+function buildOrder(roundCount, modes, seed) {
+  const rnd = mulberry32(seed);
+  const enabled = ['tot', 'wml', 'num', 'word'].filter(m => modes[m]);
+  const pools = {};
+  for (const m of enabled) pools[m] = shuffled(QUESTIONS.filter(q => q.type === m), rnd);
+  const order = [];
+  let mi = Math.floor(rnd() * enabled.length);
+  let guard = 0;
+  while (order.length < roundCount && guard++ < 500) {
+    const m = enabled[mi % enabled.length];
+    mi++;
+    if (pools[m] && pools[m].length) order.push(pools[m].shift().id);
+    else if (enabled.every(x => !pools[x].length)) break;
+  }
+  return order;
+}
+
+const QINDEX = {};
+for (const q of QUESTIONS) QINDEX[q.id] = q;
+
+// ---------- Scoring helpers ----------
+function tierLabel(tier) {
+  if (tier >= 1) return 'full';
+  if (tier > 0) return 'close';
+  return 'none';
+}
+
+function syncTitle(pct) {
+  if (pct >= 90) return { t: 'توارد أسطوري! 🤯', s: 'كأنكم عقل واحد بجسدين… مخيف بصراحة!' };
+  if (pct >= 80) return { t: 'قلب واحد 💞', s: 'مستوى تخاطر عالي جداً، مبروك فتح المكافآت!' };
+  if (pct >= 60) return { t: 'على نفس الموجة 📡', s: 'تفاهم واضح… وشوية جولات بعد وتوصلون القمة' };
+  if (pct >= 40) return { t: 'خط التخاطر متذبذب 😅', s: 'فيه إشارة… بس تحتاج تقوية شبكة' };
+  return { t: 'يبيلكم قعدة وقهوة ☕', s: 'ولا يهمكم، التخاطر يجي مع الكركديه والسوالف' };
+}
+
+const REWARDS = [
+  { icon: '🛋️', title: 'كوبون إعفاء', desc: 'إعفاء كامل من مهمة منزلية واحدة تختارها… بدون نقاش!' },
+  { icon: '🚗', title: 'قائد الرحلة', desc: 'أنت تختار وجهة المشوار الجاي والطرف الثاني ينفذ بس' },
+  { icon: '☕', title: 'قهوة على حسابه', desc: 'كوب قهوتك المفضل على حساب شريكك، توصيل أو مشوار' },
+  { icon: '🎬', title: 'ريموت السهرة', desc: 'أنت تختار فيلم أو مسلسل السهرة… بدون أي اعتراض' },
+  { icon: '🍽️', title: 'عشاء VIP', desc: 'عشاء بالمطعم اللي تختاره أنت، والحجز على الطرف الثاني' },
+  { icon: '😴', title: 'صباح كسل', desc: 'تصحى متأخر يوم الإجازة والطرف الثاني يتكفل بالفطور' },
+];
+
+// ---------- Exports (Node tests) ----------
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    normalizeAr, levenshtein, similarity, textMatch, numberMatch, choiceMatch,
+    QUESTIONS, QINDEX, buildOrder, mulberry32, shuffled, tierLabel, syncTitle, REWARDS,
+  };
+}
+</script>
+<script>
+/* ============================================================
+   توارد — Sync Mind | App engine (UI + realtime + local mode)
+   ============================================================ */
+'use strict';
+
+/* ⚙️ FIREBASE CONFIG */
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyBUgnfL9bsV9o1B6onKW7XFXayoQfz7Pg4",
+  authDomain: "sync-mind-1b4d9.firebaseapp.com",
+  databaseURL: "https://sync-mind-1b4d9-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "sync-mind-1b4d9",
+  storageBucket: "sync-mind-1b4d9.firebasestorage.app",
+  messagingSenderId: "450287688942",
+  appId: "1:450287688942:web:c44a57128015acc3b5e7ff"
+};
+
+const DB_ROOT = 'rooms';
+const FB_SDK_V = '10.14.1';
+
+/* ---------------- tiny utils ---------------- */
+const $ = id => document.getElementById(id);
+const AR_D = '٠١٢٣٤٥٦٧٨٩';
+const toAr = n => String(n).replace(/\d/g, d => AR_D[+d]);
+const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
+const rndInt = n => Math.floor(Math.random() * n);
+const now0 = () => Date.now();
+let serverOffset = 0;
+const snow = () => Date.now() + serverOffset;
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('on'));
+  $(id).classList.add('on');
+  window.scrollTo(0, 0);
+}
+let toastTimer = null;
+function toast(msg, ms = 2400) {
+  const t = $('toast'); t.textContent = msg; t.classList.add('on');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('on'), ms);
+}
+function vibrate(p) { try { navigator.vibrate && navigator.vibrate(p); } catch (e) {} }
+
+/* ---------------- sound (WebAudio, no assets) ---------------- */
+let AC = null, muted = localStorage.getItem('sm_muted') === '1';
+function ac() {
+  if (!AC) { try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} }
+  if (AC && AC.state === 'suspended') AC.resume();
+  return AC;
+}
+function tone(f, t0, dur, type = 'sine', g = 0.12, slide = 0) {
+  const c = ac(); if (!c || muted) return;
+  const o = c.createOscillator(), v = c.createGain();
+  o.type = type; o.frequency.setValueAtTime(f, c.currentTime + t0);
+  if (slide) o.frequency.exponentialRampToValueAtTime(Math.max(40, f + slide), c.currentTime + t0 + dur);
+  v.gain.setValueAtTime(0, c.currentTime + t0);
+  v.gain.linearRampToValueAtTime(g, c.currentTime + t0 + 0.015);
+  v.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + t0 + dur);
+  o.connect(v); v.connect(c.destination);
+  o.start(c.currentTime + t0); o.stop(c.currentTime + t0 + dur + 0.05);
+}
+const S = {
+  tick: () => tone(880, 0, 0.06, 'square', 0.04),
+  submit: () => { tone(520, 0, 0.09, 'sine', 0.1); tone(780, 0.07, 0.12, 'sine', 0.08); },
+  flip: () => tone(300, 0, 0.25, 'sine', 0.07, 500),
+  full: () => { [523, 659, 784, 1047].forEach((f, i) => tone(f, i * 0.09, 0.22, 'triangle', 0.12)); },
+  close: () => { tone(440, 0, 0.14, 'triangle', 0.1); tone(554, 0.12, 0.2, 'triangle', 0.1); },
+  miss: () => { tone(220, 0, 0.25, 'sine', 0.09, -60); },
+  join: () => { tone(660, 0, 0.12, 'sine', 0.1); tone(990, 0.1, 0.18, 'sine', 0.09); },
+  fanfare: () => { [523, 659, 784, 659, 784, 1047, 1319].forEach((f, i) => tone(f, i * 0.12, 0.25, 'triangle', 0.11)); },
+};
+$('btn-sound').textContent = muted ? '🔇' : '🔊';
+$('btn-sound').onclick = () => {
+  muted = !muted; localStorage.setItem('sm_muted', muted ? '1' : '0');
+  $('btn-sound').textContent = muted ? '🔇' : '🔊';
+};
+document.addEventListener('pointerdown', () => ac(), { once: true });
+
+/* ---------------- confetti ---------------- */
+const fx = $('fx'), fctx = fx.getContext('2d');
+let pieces = [], fxRunning = false;
+function fxResize() { fx.width = innerWidth * devicePixelRatio; fx.height = innerHeight * devicePixelRatio; }
+addEventListener('resize', fxResize); fxResize();
+const FX_COLORS = ['#ff5d8f', '#8b5cf6', '#ffc466', '#4ed8c3', '#ffffff'];
+function burst(n = 90, hearts = false) {
+  const W = fx.width, H = fx.height, dp = devicePixelRatio;
+  for (let i = 0; i < n; i++) {
+    const heart = hearts && Math.random() < 0.25;
+    pieces.push({
+      x: W / 2 + (Math.random() - 0.5) * W * 0.4, y: H * 0.35,
+      vx: (Math.random() - 0.5) * 14 * dp, vy: (-8 - Math.random() * 9) * dp,
+      g: 0.35 * dp, w: (5 + Math.random() * 6) * dp, r: Math.random() * Math.PI,
+      vr: (Math.random() - 0.5) * 0.25, c: FX_COLORS[rndInt(FX_COLORS.length)],
+      t: heart ? '💖' : null, life: 140 + rndInt(60),
+    });
+  }
+  if (!fxRunning) { fxRunning = true; requestAnimationFrame(fxLoop); }
+}
+function fxLoop() {
+  fctx.clearRect(0, 0, fx.width, fx.height);
+  pieces = pieces.filter(p => p.life > 0 && p.y < fx.height + 40);
+  for (const p of pieces) {
+    p.x += p.vx; p.y += p.vy; p.vy += p.g; p.vx *= 0.99; p.r += p.vr; p.life--;
+    fctx.save(); fctx.translate(p.x, p.y); fctx.rotate(p.r);
+    fctx.globalAlpha = clamp(p.life / 50, 0, 1);
+    if (p.t) { fctx.font = `${p.w * 2.4}px serif`; fctx.fillText(p.t, 0, 0); }
+    else { fctx.fillStyle = p.c; fctx.fillRect(-p.w / 2, -p.w / 4, p.w, p.w / 2); }
+    fctx.restore();
+  }
+  if (pieces.length) requestAnimationFrame(fxLoop); else { fxRunning = false; fctx.clearRect(0, 0, fx.width, fx.height); }
+}
+
+/* ---------------- constants / meta ---------------- */
+const MODES_META = {
+  tot: { icon: '⚡', label: 'هذا أو ذاك' },
+  wml: { icon: '🫵', label: 'مين فينا؟' },
+  num: { icon: '🔢', label: 'تقدير رقمي' },
+  word: { icon: '🔮', label: 'توارد كلمات' },
+};
+const VERDICTS = {
+  full: ['توارد كامل! 🎉', 'عقل واحد بجسدين 🤯', 'تطابق أسطوري 💞', 'تخاطر نقي ١٠٠٪ ✨'],
+  close: ['قريبين مررره 👀', 'على وشك التخاطر ✨', 'نص توارد… يحسب! 😉'],
+  none: ['ولا قريب 😅', 'الإرسال ضعيف اليوم 📡', 'التخاطر تحت الصيانة 🛠️', 'اختلفتوا… عادي نكمل 😂'],
+};
+const pick = a => a[rndInt(a.length)];
+const ROUNDS_OPTS = [5, 10, 15], TIMER_OPTS = [15, 20, 30];
+
+/* ---------------- session ---------------- */
+function myUid() {
+  let u = localStorage.getItem('sm_uid');
+  if (!u) { u = 'u' + Math.random().toString(36).slice(2, 10); localStorage.setItem('sm_uid', u); }
+  return u;
+}
+const saveSess = s => localStorage.setItem('sm_sess', JSON.stringify(s));
+const loadSess = () => { try { return JSON.parse(localStorage.getItem('sm_sess')); } catch (e) { return null; } };
+const clearSess = () => localStorage.removeItem('sm_sess');
+const saveName = n => localStorage.setItem('sm_name', n);
+$('inp-name').value = localStorage.getItem('sm_name') || '';
+
+/* ---------------- Firebase adapter ---------------- */
+let fb = null; // {db, ref, unsub}
+function loadScript(src) {
+  return new Promise((res, rej) => {
+    const s = document.createElement('script');
+    s.src = src; s.onload = res; s.onerror = () => rej(new Error('load ' + src));
+    document.head.appendChild(s);
+  });
+}
+async function fbInit() {
+  if (!FIREBASE_CONFIG) throw new Error('no-config');
+  if (fb) return fb;
+  await loadScript(`https://www.gstatic.com/firebasejs/${FB_SDK_V}/firebase-app-compat.js`);
+  await loadScript(`https://www.gstatic.com/firebasejs/${FB_SDK_V}/firebase-database-compat.js`);
+  firebase.initializeApp(FIREBASE_CONFIG);
+  const db = firebase.database();
+  db.ref('.info/serverTimeOffset').on('value', s => { serverOffset = s.val() || 0; });
+  fb = { db };
+  return fb;
+}
+const roomRef = pin => fb.db.ref(DB_ROOT + '/' + pin);
+
+/* ============================================================
+   GAME STATE (shared by online + local modes)
+   ============================================================ */
+const G = {
+  mode: null,        // 'online' | 'local'
+  role: null,        // 'p1' | 'p2'  (online)
+  pin: null,
+  room: null,        // latest room snapshot
+  unsub: null,
+  timerInt: null,
+  revealShown: null, // round idx whose reveal was animated
+  submittedIdx: null,
+  local: null,       // local-mode extra: {phase:'ask1'|'ask2', pending}
+  flips: 0,          // reward flips used by me
+  advancing: false,
+};
+
+function freshGame(settings, seed) {
+  const order = buildOrder(settings.rounds, settings.modes, seed);
+  return {
+    order, idx: 0, score: 0, poss: 0, streak: 0, best: 0, full: 0, close: 0,
+    round: { qid: order[0], startAt: 0, ans: {}, revealed: false, res: null },
+  };
+}
+function judge(q, a1, a2) {
+  let m;
+  if (q.type === 'word') m = textMatch(a1, a2);
+  else if (q.type === 'num') m = numberMatch(a1, a2, q.min, q.max);
+  else m = choiceMatch(a1, a2);
+  return { tier: m.tier, pts: m.tier };
+}
+function qText(q, room) {
+  let t = q.q;
+  const n1 = room?.players?.p1?.name || 'اللاعب الأول';
+  const n2 = room?.players?.p2?.name || 'اللاعب الثاني';
+  return t.replace('{p1}', n1).replace('{p2}', n2);
+}
+function fmtAns(q, v, room) {
+  if (v === null || v === undefined || v === '') return '⏰ ما جاوب';
+  if (q.type === 'word') return String(v);
+  if (q.type === 'num') return `${v} ${q.unit || ''}`;
+  if (q.type === 'tot') return v === 'a' ? q.a : q.b;
+  if (q.type === 'wml') return (room?.players?.[v]?.name || v) + ' 🫵';
+  return String(v);
+}
+const otherRole = r => (r === 'p1' ? 'p2' : 'p1');
+
+/* ============================================================
+   RENDER — driven by room snapshots
+   ============================================================ */
+function onRoom(room) {
+  G.room = room;
+  if (!room) {
+    if (G.mode === 'online') { detach(); clearSess(); toast('الغرفة انتهت أو حُذفت 🥲'); showScreen('s-home'); refreshResume(); }
+    return;
+  }
+  if (room.state === 'lobby') renderLobby(room);
+  else if (room.state === 'playing') renderPlaying(room);
+  else if (room.state === 'final') renderFinal(room);
+  refereeCheck();
+}
+
+/* ---------------- lobby ---------------- */
+function segButtons(el, opts, cur, fmt, onPick) {
+  el.innerHTML = '';
+  opts.forEach(o => {
+    const b = document.createElement('button');
+    b.textContent = fmt(o);
+    if (o === cur) b.classList.add('on');
+    b.onclick = () => onPick && onPick(o);
+    el.appendChild(b);
+  });
+}
+function modeChips(el, modes, editable, onToggle) {
+  el.innerHTML = '';
+  Object.keys(MODES_META).forEach(m => {
+    const c = document.createElement('button');
+    c.className = 'mchip' + (modes[m] ? ' on' : '');
+    c.textContent = `${MODES_META[m].icon} ${MODES_META[m].label}`;
+    c.onclick = () => { if (editable) onToggle(m); };
+    el.appendChild(c);
+  });
+}
+let joinDing = false;
+function renderLobby(room) {
+  showScreen('s-lobby');
+  $('lobby-pin').textContent = room.pin || G.pin;
+  const host = G.role === 'p1';
+  const p1 = room.players?.p1, p2 = room.players?.p2;
+  const s1 = $('slot-p1'), s2 = $('slot-p2');
+  s1.querySelector('.pn').textContent = p1?.name || '—';
+  s1.querySelector('.ps').textContent = host ? 'أنت (منشئ الغرفة)' : 'منشئ الغرفة';
+  s1.className = 'pslot' + (p1 ? ' ready' : ' empty');
+  if (p2) {
+    s2.querySelector('.pa').textContent = '🙋‍♀️';
+    s2.querySelector('.pn').textContent = p2.name;
+    s2.querySelector('.ps').textContent = G.role === 'p2' ? 'أنت' : 'انضم ✓';
+    s2.className = 'pslot ready';
+    if (!joinDing && host) { joinDing = true; S.join(); vibrate(60); }
+  } else {
+    s2.querySelector('.pa').textContent = '⏳';
+    s2.querySelector('.pn').textContent = 'بانتظاره…';
+    s2.querySelector('.ps').textContent = 'شارك الرمز';
+    s2.className = 'pslot empty';
+    joinDing = false;
+  }
+  const st = room.settings;
+  segButtons($('seg-rounds'), ROUNDS_OPTS, st.rounds, o => toAr(o), host ? (o => setSetting('rounds', o)) : null);
+  segButtons($('seg-timer'), TIMER_OPTS, st.timer, o => toAr(o) + ' ث', host ? (o => setSetting('timer', o)) : null);
+  modeChips($('mode-chips'), st.modes, host, m => {
+    const cnt = Object.values(st.modes).filter(Boolean).length;
+    if (st.modes[m] && cnt <= 1) { toast('لازم نمط واحد على الأقل 🙂'); return; }
+    setSetting('modes/' + m, !st.modes[m]);
+  });
+  $('guest-note').classList.toggle('hidden', host);
+  $('lobby-settings').style.opacity = host ? 1 : 0.75;
+  const btn = $('btn-start');
+  if (host) {
+    btn.classList.remove('hidden');
+    btn.disabled = !p2;
+    btn.textContent = p2 ? 'ابدأوا التحدي 🚀' : 'بانتظار انضمام شريكك…';
+  } else {
+    btn.classList.remove('hidden');
+    btn.disabled = true;
+    btn.textContent = `بانتظار ${p1?.name || 'المنشئ'} يبدأ اللعب…`;
+  }
+}
+function setSetting(path, val) {
+  if (G.mode === 'online') roomRef(G.pin).child('settings/' + path).set(val);
+}
+
+/* ---------------- playing ---------------- */
+function curQ(room) { return QINDEX[room.game.order[room.game.idx]]; }
+
+function renderPlaying(room) {
+  const g = room.game, q = curQ(room);
+  if (!q) return;
+  if (g.round.revealed) { renderReveal(room); return; }
+  // fresh round → reset per-round UI state
+  if (G.submittedIdx !== null && G.submittedIdx !== g.idx) G.submittedIdx = null;
+  G.advancing = false;
+  showScreen('s-game');
+  const N = g.order.length;
+  $('round-ind').textContent = `${toAr(g.idx + 1)} / ${toAr(N)}`;
+  const pct = g.poss ? (g.score / g.poss) * 100 : 0;
+  $('meter-fill').style.width = pct + '%';
+  $('streak-ind').textContent = g.streak >= 2 ? `🔥×${toAr(g.streak)}` : '';
+  const partner = room.players?.[otherRole(G.role)];
+  $('partner-name-top').textContent = G.mode === 'online' ? (partner?.name || '') : '';
+  $('presence').classList.toggle('hidden', G.mode !== 'online');
+  if (G.mode === 'online') $('presence').classList.toggle('off', !partner?.online);
+
+  $('q-mode').textContent = `${MODES_META[q.type].icon} ${MODES_META[q.type].label}`;
+  $('q-text').textContent = qText(q, room);
+
+  const me = G.mode === 'local' ? G.local.turn : G.role;
+  const myAns = g.round.ans?.[me];
+  const partnerAns = g.round.ans?.[otherRole(me)];
+  const submitted = myAns !== undefined || G.submittedIdx === g.idx;
+
+  ['w-word', 'w-choice', 'w-num', 'w-wait'].forEach(id => $(id).classList.add('hidden'));
+  $('partner-answered').classList.add('hidden');
+
+  if (submitted) {
+    $('w-wait').classList.remove('hidden');
+    $('wait-msg').textContent = G.mode === 'local'
+      ? 'تسجّلت إجابتك بسرية 🔒'
+      : (partnerAns !== undefined ? 'شريكك جاوب بعد! جاري الكشف…' : `بانتظار ${partner?.name || 'شريكك'}…`);
+  } else {
+    if (q.type === 'word') {
+      $('w-word').classList.remove('hidden');
+      if (G.lastQidUI !== q.id + me) $('inp-word').value = '';
+    } else if (q.type === 'num') {
+      $('w-num').classList.remove('hidden');
+      const r = $('inp-range');
+      if (G.lastQidUI !== q.id + me) {
+        r.min = q.min; r.max = q.max; r.value = Math.round((q.min + q.max) / 2);
+        $('num-val').textContent = r.value; $('num-unit').textContent = q.unit || '';
+      }
+    } else {
+      $('w-choice').classList.remove('hidden');
+      const A = $('opt-a'), B = $('opt-b');
+      A.classList.remove('sel'); B.classList.remove('sel');
+      if (q.type === 'tot') { A.textContent = q.a; B.textContent = q.b; A.dataset.v = 'a'; B.dataset.v = 'b'; }
+      else {
+        A.textContent = `${room.players?.p1?.name || 'الأول'} 🙋‍♂️`; B.textContent = `${room.players?.p2?.name || 'الثاني'} 🙋‍♀️`;
+        A.dataset.v = 'p1'; B.dataset.v = 'p2';
+      }
+    }
+    if (G.mode === 'online' && partnerAns !== undefined) {
+      const pa = $('partner-answered');
+      pa.textContent = `✅ ${partner?.name || 'شريكك'} أرسل إجابته… لا تطوّل!`;
+      pa.classList.remove('hidden');
+    }
+  }
+  G.lastQidUI = q.id + me;
+  startTimerLoop();
+}
+
+/* ---------------- timer ---------------- */
+function deadline(room) {
+  const g = room.game;
+  return (g.round.startAt || 0) + room.settings.timer * 1000;
+}
+function startTimerLoop() {
+  if (G.timerInt) return;
+  G.timerInt = setInterval(timerTick, 120);
+  timerTick();
+}
+function stopTimerLoop() { clearInterval(G.timerInt); G.timerInt = null; }
+let lastTickSec = null;
+function timerTick() {
+  const room = G.room;
+  if (!room || room.state !== 'playing' || room.game.round.revealed) { stopTimerLoop(); return; }
+  const total = room.settings.timer * 1000;
+  const remain = clamp(deadline(room) - snow(), 0, total);
+  const sec = Math.ceil(remain / 1000);
+  $('timer-num').textContent = toAr(sec);
+  $('timer-arc').style.strokeDashoffset = String(201 * (1 - remain / total));
+  $('timer').classList.toggle('hurry', sec <= 5 && sec > 0);
+  const me = G.mode === 'local' ? G.local?.turn : G.role;
+  const submitted = room.game.round.ans?.[me] !== undefined || G.submittedIdx === room.game.idx;
+  if (sec <= 5 && sec >= 1 && sec !== lastTickSec && !submitted) { S.tick(); }
+  lastTickSec = sec;
+  if (remain <= 0) {
+    if (G.mode === 'local') {
+      if ($('s-game').classList.contains('on')) lTimeout();
+      return;
+    }
+    refereeCheck();
+  }
+}
+
+/* ---------------- submitting ---------------- */
+function submitAnswer(v) {
+  const room = G.room; if (!room || room.state !== 'playing' || room.game.round.revealed) return;
+  const g = room.game;
+  if (snow() > deadline(room) + 400) { toast('خلص الوقت! ⏰'); return; }
+  S.submit(); vibrate(30);
+  if (G.mode === 'local') { lSubmit(v); return; }
+  G.submittedIdx = g.idx;
+  const val = { v, t: firebase.database.ServerValue.TIMESTAMP };
+  roomRef(G.pin).child(`game/round/ans/${G.role}`).set(val);
+  renderPlaying(room); // instant UI feedback
+}
+$('btn-send-word').onclick = () => {
+  const v = $('inp-word').value.trim();
+  if (!v) { toast('اكتب إجابتك أول 🙂'); return; }
+  submitAnswer(v);
+};
+$('inp-word').addEventListener('keydown', e => { if (e.key === 'Enter') $('btn-send-word').click(); });
+$('opt-a').onclick = e => { e.target.classList.add('sel'); setTimeout(() => submitAnswer(e.target.dataset.v), 150); };
+$('opt-b').onclick = e => { e.target.classList.add('sel'); setTimeout(() => submitAnswer(e.target.dataset.v), 150); };
+$('inp-range').addEventListener('input', e => { $('num-val').textContent = e.target.value; });
+$('btn-send-num').onclick = () => submitAnswer(Number($('inp-range').value));
+
+/* ---------------- referee (online): reveal when ready ---------------- */
+function refereeCheck() {
+  if (G.mode !== 'online' || !G.room || G.room.state !== 'playing') return;
+  const room = G.room, g = room.game;
+  if (!g || !g.round || g.round.revealed) return;
+  const both = g.round.ans?.p1 !== undefined && g.round.ans?.p2 !== undefined;
+  const isHost = G.role === 'p1';
+  const expired = snow() > deadline(room) + (isHost ? 900 : 3500); // host referees first, guest is fallback
+  if (both) {
+    if (isHost) doReveal();
+    else setTimeout(() => { // give the host a moment, then referee ourselves
+      const r = G.room;
+      if (r && r.state === 'playing' && !r.game.round.revealed
+        && r.game.round.ans?.p1 !== undefined && r.game.round.ans?.p2 !== undefined) doReveal();
+    }, 1600);
+  } else if (expired) {
+    doReveal();
+  }
+}
+let revealing = false;
+function doReveal() {
+  if (revealing) return; revealing = true;
+  roomRef(G.pin).child('game').transaction(g => {
+    if (!g || g.round.revealed) return; // abort
+    const q = QINDEX[g.order[g.idx]];
+    const a1 = g.round.ans?.p1?.v ?? null;
+    const a2 = g.round.ans?.p2?.v ?? null;
+    const res = judge(q, a1, a2);
+    g.round.revealed = true;
+    g.round.res = res;
+    g.score = (g.score || 0) + res.pts;
+    g.poss = (g.poss || 0) + 1;
+    g.streak = res.tier >= 1 ? (g.streak || 0) + 1 : 0;
+    g.best = Math.max(g.best || 0, g.streak);
+    if (res.tier >= 1) g.full = (g.full || 0) + 1;
+    else if (res.tier > 0) g.close = (g.close || 0) + 1;
+    return g;
+  }, () => { revealing = false; }, false);
+}
+
+/* ---------------- reveal screen ---------------- */
+function renderReveal(room) {
+  const g = room.game, q = curQ(room), res = g.round.res || { tier: 0, pts: 0 };
+  showScreen('s-reveal');
+  stopTimerLoop();
+  const N = g.order.length;
+  $('rv-round-ind').textContent = `${toAr(g.idx + 1)} / ${toAr(N)}`;
+  $('rv-meter-fill').style.width = (g.poss ? (g.score / g.poss) * 100 : 0) + '%';
+  $('rv-streak-ind').textContent = g.streak >= 2 ? `🔥×${toAr(g.streak)}` : '';
+  $('rv-q').textContent = qText(q, room);
+  const n1 = room.players?.p1?.name || 'الأول', n2 = room.players?.p2?.name || 'الثاني';
+  $('rv-n1').textContent = n1; $('rv-n2').textContent = n2;
+  $('rv-a1').textContent = fmtAns(q, g.round.ans?.p1?.v ?? null, room);
+  $('rv-a2').textContent = fmtAns(q, g.round.ans?.p2?.v ?? null, room);
+  const last = g.idx >= N - 1;
+  $('btn-next').textContent = last ? 'النتيجة النهائية 🏁' : 'الجولة الجاية ←';
+  $('next-hint').textContent = '';
+
+  if (G.revealShown === g.idx) return; // animate once
+  G.revealShown = g.idx;
+  $('rv-c1').classList.remove('flip'); $('rv-c2').classList.remove('flip');
+  const v = $('verdict'); v.style.visibility = 'hidden';
+  setTimeout(() => { S.flip(); $('rv-c1').classList.add('flip'); }, 350);
+  setTimeout(() => { S.flip(); $('rv-c2').classList.add('flip'); }, 750);
+  setTimeout(() => {
+    v.style.visibility = 'visible';
+    const lbl = tierLabel(res.tier);
+    v.className = 'verdict v-' + lbl;
+    $('v-big').textContent = pick(VERDICTS[lbl]);
+    $('v-pts').innerHTML = res.tier >= 1 ? '<span class="tag" style="color:var(--teal)">+١ نقطة كاملة</span>'
+      : res.tier > 0 ? '<span class="tag" style="color:var(--gold)">+٠٫٥ نقطة</span>'
+      : '<span class="tag" style="color:var(--bad)">بدون نقاط</span>';
+    if (res.tier >= 1) { S.full(); vibrate([60, 40, 120]); burst(110, true); }
+    else if (res.tier > 0) { S.close(); vibrate(50); burst(45); }
+    else { S.miss(); vibrate(120); }
+  }, 1250);
+}
+$('btn-next').onclick = () => {
+  if (G.mode === 'local') { lNext(); return; }
+  advanceRound();
+};
+function advanceRound() {
+  if (G.advancing) return; G.advancing = true;
+  const seenIdx = G.room?.game?.idx;
+  roomRef(G.pin).child('game').transaction(g => {
+    if (!g || !g.round.revealed || g.idx !== seenIdx) return;
+    if (g.idx >= g.order.length - 1) { g.done = true; return g; }
+    g.idx++;
+    g.round = { qid: g.order[g.idx], startAt: firebase.database.ServerValue.TIMESTAMP, ans: {}, revealed: false, res: null };
+    return g;
+  }, (err, committed, snap) => {
+    G.advancing = false;
+    const g = snap && snap.val();
+    if (g && g.done && G.room.state === 'playing') roomRef(G.pin).child('state').set('final');
+  }, false);
+}
+
+/* ---------------- final ---------------- */
+let finalAnimated = false;
+function renderFinal(room) {
+  const g = room.game;
+  showScreen('s-final');
+  stopTimerLoop();
+  const pct = g.poss ? Math.round((g.score / g.poss) * 100) : 0;
+  const t = syncTitle(pct);
+  $('final-title').textContent = t.t;
+  $('final-sub').textContent = t.s;
+  $('st-full').textContent = toAr(g.full || 0);
+  $('st-close').textContent = toAr(g.close || 0);
+  $('st-best').textContent = toAr(g.best || 0);
+  $('btn-rematch').classList.toggle('hidden', G.mode === 'online' && G.role !== 'p1');
+  renderRewards(room, pct);
+  if (!finalAnimated) {
+    finalAnimated = true;
+    S.fanfare();
+    if (pct >= 80) setTimeout(() => burst(140, true), 700);
+    const arc = $('gauge-arc'), lbl = $('gauge-pct');
+    const t0 = performance.now(), dur = 1700;
+    (function anim(tn) {
+      const k = clamp((tn - t0) / dur, 0, 1);
+      const e = 1 - Math.pow(1 - k, 3);
+      const p = Math.round(pct * e);
+      lbl.textContent = p + '%';
+      arc.style.strokeDashoffset = String(553 * (1 - (pct * e) / 100));
+      if (k < 1) requestAnimationFrame(anim);
+    })(t0);
+  }
+}
+function renderRewards(room, pct) {
+  const area = $('rewards-area');
+  if (pct < 80) {
+    area.innerHTML = `<div class="locked-note">🔒 بطاقات الامتياز تنفتح عند تخاطر <b style="color:var(--gold)">٨٠٪</b> فأعلى<br>قربتوا! جولة ثانية وبتوصلون 💪</div>`;
+    return;
+  }
+  if (area.dataset.built === String(room.seed)) return;
+  area.dataset.built = String(room.seed);
+  const rnd = mulberry32((room.seed || 7) + 77);
+  const cards = shuffled(REWARDS, rnd).slice(0, 6);
+  const maxFlips = G.mode === 'local' ? 2 : 1;
+  area.innerHTML = `<p class="center tiny muted" style="margin-bottom:10px">${G.mode === 'local' ? 'كل واحد يقلب بطاقة: الأول ثم الثاني 🎁' : 'اقلب بطاقة وحدة من نصيبك 🎁'}</p><div class="rw-grid"></div>`;
+  const grid = area.querySelector('.rw-grid');
+  G.flips = 0;
+  cards.forEach(rw => {
+    const el = document.createElement('div');
+    el.className = 'rw-card';
+    el.innerHTML = `<div class="rw-face rw-back">🎁</div><div class="rw-face rw-front"><div style="font-size:1.3rem">${rw.icon}</div><b>${rw.title}</b><span>${rw.desc}</span></div>`;
+    el.onclick = () => {
+      if (el.classList.contains('flip')) return;
+      if (G.flips >= maxFlips) { toast('خلصت بطاقاتكم لهاللعبة 😄'); return; }
+      G.flips++; el.classList.add('flip'); S.flip(); vibrate(40);
+      setTimeout(() => { S.full(); burst(40, true); }, 500);
+    };
+    grid.appendChild(el);
+  });
+}
+$('btn-rematch').onclick = () => {
+  finalAnimated = false; G.revealShown = null; G.submittedIdx = null;
+  if (G.mode === 'local') { lRematch(); return; }
+  const newSeed = (Date.now() % 2147483647) | 0;
+  roomRef(G.pin).transaction(r => {
+    if (!r || r.state !== 'final') return;
+    r.seed = newSeed;
+    r.state = 'playing';
+    r.game = freshGame(r.settings, newSeed);
+    r.game.round.startAt = firebase.database.ServerValue.TIMESTAMP;
+    return r;
+  }, null, false);
+};
+$('btn-share-result').onclick = async () => {
+  const g = G.room?.game; if (!g) return;
+  const pct = g.poss ? Math.round((g.score / g.poss) * 100) : 0;
+  const t = syncTitle(pct);
+  const txt = `🧠💞 توارد | Sync Mind\nنسبة التخاطر بيننا: ${pct}٪ — ${t.t}\nتقدرون تتفوقون علينا؟ 😏`;
+  try {
+    if (navigator.share) await navigator.share({ text: txt + '\n' + location.href.split('?')[0] });
+    else { await navigator.clipboard.writeText(txt + '\n' + location.href.split('?')[0]); toast('انتسخت النتيجة 📋'); }
+  } catch (e) {}
+};
+$('btn-final-home').onclick = () => leaveGame(false);
+
+/* ============================================================
+   ONLINE FLOW: create / join / attach
+   ============================================================ */
+function needName() {
+  const n = $('inp-name').value.trim();
+  if (!n) { toast('اكتب اسمك أول ✍️'); $('inp-name').focus(); return null; }
+  saveName(n);
+  return n;
+}
+async function ensureOnline() {
+  if (!FIREBASE_CONFIG) {
+    toast('وضع الأونلاين للحظة غير مفعّل — جرب «جوال واحد» 🙏', 3200);
+    return false;
+  }
+  try { await fbInit(); return true; }
+  catch (e) { console.error(e); toast('تعذر الاتصال بالخادم 😞'); return false; }
+}
+function detach() {
+  if (G.unsub) { G.unsub(); G.unsub = null; }
+  stopTimerLoop();
+  G.mode = null; G.room = null; G.pin = null; G.role = null;
+  G.revealShown = null; G.submittedIdx = null; finalAnimated = false; joinDing = false;
+}
+function attachRoom(pin, role) {
+  G.mode = 'online'; G.pin = pin; G.role = role;
+  const ref = roomRef(pin);
+  const cb = ref.on('value', s => onRoom(s.val()), () => toast('انقطع الاتصال بالغرفة'));
+  G.unsub = () => ref.off('value', cb);
+  const pres = ref.child('players/' + role + '/online');
+  pres.set(true);
+  pres.onDisconnect().set(false);
+  saveSess({ pin, role, name: $('inp-name').value.trim() || localStorage.getItem('sm_name') });
+  keepAwake();
+}
+$('btn-create').onclick = async () => {
+  const name = needName(); if (!name) return;
+  if (!(await ensureOnline())) return;
+  $('btn-create').disabled = true;
+  try {
+    let pin = null;
+    for (let i = 0; i < 12; i++) {
+      const cand = String(1000 + rndInt(9000));
+      const snap = await roomRef(cand).get();
+      const val = snap.val();
+      if (!val || (val.createdAt && now0() - val.createdAt > 24 * 3600 * 1000)) { pin = cand; break; }
+    }
+    if (!pin) throw new Error('no pin');
+    const room = {
+      v: 1, pin, createdAt: firebase.database.ServerValue.TIMESTAMP,
+      state: 'lobby',
+      seed: (Date.now() % 2147483647) | 0,
+      settings: { rounds: 10, timer: 20, modes: { tot: true, wml: true, num: true, word: true } },
+      players: { p1: { name, id: myUid(), online: true } },
+    };
+    await roomRef(pin).set(room);
+    attachRoom(pin, 'p1');
+  } catch (e) { console.error(e); toast('صار خطأ بإنشاء الغرفة، جرب ثانية 🙏'); }
+  $('btn-create').disabled = false;
+};
+$('btn-goto-join').onclick = () => { if (needName()) { showScreen('s-join'); $('inp-pin').focus(); } };
+$('btn-join').onclick = async () => {
+  const name = $('inp-name').value.trim() || localStorage.getItem('sm_name');
+  if (!name) { showScreen('s-home'); toast('اكتب اسمك أول ✍️'); return; }
+  const pin = $('inp-pin').value.trim();
+  $('join-err').textContent = '';
+  if (!/^\d{4}$/.test(pin)) { $('join-err').textContent = 'الرمز ٤ أرقام 🙂'; return; }
+  if (!(await ensureOnline())) return;
+  $('btn-join').disabled = true;
+  // keep a listener attached so the transaction runs against warm cache
+  const holdRef = roomRef(pin), hold = () => {};
+  holdRef.on('value', hold);
+  try { await holdRef.get(); } catch (e) {}
+  roomRef(pin).transaction(r => {
+    if (!r) return; // not found → abort
+    if (!r.players) r.players = {};
+    if (r.players.p2 && r.players.p2.id !== myUid()) return; // full → abort
+    r.players.p2 = { name, id: myUid(), online: true };
+    return r;
+  }, (err, committed, snap) => {
+    $('btn-join').disabled = false;
+    if (err || !committed || !snap.val()) {
+      holdRef.off('value', hold);
+      $('join-err').textContent = !snap || !snap.val() ? 'ما لقينا غرفة بهالرمز 🤔' : 'الغرفة مكتملة بلاعبَين 😅';
+      return;
+    }
+    S.join();
+    attachRoom(pin, 'p2');
+    holdRef.off('value', hold);
+  }, false);
+};
+$('btn-start').onclick = () => {
+  if (G.mode !== 'online' || G.role !== 'p1') return;
+  const room = G.room; if (!room?.players?.p2) return;
+  roomRef(G.pin).transaction(r => {
+    if (!r || r.state !== 'lobby' || !r.players?.p2) return;
+    r.state = 'playing';
+    r.game = freshGame(r.settings, r.seed);
+    r.game.round.startAt = firebase.database.ServerValue.TIMESTAMP;
+    return r;
+  }, null, false);
+};
+$('btn-leave-lobby').onclick = () => leaveGame(true);
+$('btn-exit-game').onclick = () => {
+  if (confirm('متأكد تبي تطلع من اللعبة؟')) leaveGame(true);
+};
+function leaveGame(remove) {
+  if (G.mode === 'online' && G.pin) {
+    const ref = roomRef(G.pin);
+    if (remove && G.role === 'p1') ref.remove();
+    else if (remove && G.role === 'p2') ref.child('players/p2').remove();
+    else ref.child('players/' + G.role + '/online').set(false);
+  }
+  detach(); clearSess();
+  showScreen('s-home'); refreshResume();
+}
+
+/* share pin */
+function roomLink() { return location.origin + location.pathname + '?pin=' + G.pin; }
+$('btn-share-pin').onclick = async () => {
+  const txt = `تعال نلعب «توارد» 🧠💞\nرمز الغرفة: ${G.pin}\n`;
+  try {
+    if (navigator.share) await navigator.share({ text: txt, url: roomLink() });
+    else { await navigator.clipboard.writeText(txt + roomLink()); toast('انتسخ الرابط 📋'); }
+  } catch (e) {}
+};
+$('btn-copy-pin').onclick = async () => {
+  try { await navigator.clipboard.writeText(G.pin); toast('انتسخ الرمز 📋'); } catch (e) {}
+};
+
+/* resume */
+function refreshResume() {
+  const s = loadSess();
+  const chip = $('btn-resume');
+  if (s && FIREBASE_CONFIG) { chip.classList.add('on'); $('resume-pin').textContent = s.pin; }
+  else chip.classList.remove('on');
+}
+$('btn-resume').onclick = async () => {
+  const s = loadSess(); if (!s) return;
+  if (!(await ensureOnline())) return;
+  const snap = await roomRef(s.pin).get();
+  if (!snap.val()) { clearSess(); refreshResume(); toast('غرفتك القديمة انتهت 🥲'); return; }
+  if ($('inp-name').value.trim()) saveName($('inp-name').value.trim());
+  attachRoom(s.pin, s.role);
+};
+
+/* ============================================================
+   LOCAL MODE (جوال واحد — تناوب)
+   ============================================================ */
+const L = { settings: { rounds: 10, timer: 20, modes: { tot: true, wml: true, num: true, word: true } } };
+function lRenderSetup() {
+  segButtons($('lseg-rounds'), ROUNDS_OPTS, L.settings.rounds, o => toAr(o), o => { L.settings.rounds = o; lRenderSetup(); });
+  segButtons($('lseg-timer'), TIMER_OPTS, L.settings.timer, o => toAr(o) + ' ث', o => { L.settings.timer = o; lRenderSetup(); });
+  modeChips($('lmode-chips'), L.settings.modes, true, m => {
+    const cnt = Object.values(L.settings.modes).filter(Boolean).length;
+    if (L.settings.modes[m] && cnt <= 1) { toast('لازم نمط واحد على الأقل 🙂'); return; }
+    L.settings.modes[m] = !L.settings.modes[m]; lRenderSetup();
+  });
+}
+$('btn-local').onclick = () => { lRenderSetup(); showScreen('s-local'); };
+$('btn-local-start').onclick = () => {
+  const n1 = $('inp-ln1').value.trim(), n2 = $('inp-ln2').value.trim();
+  if (!n1 || !n2) { toast('اكتبوا الاسمين ✍️'); return; }
+  const seed = (Date.now() % 2147483647) | 0;
+  G.mode = 'local'; G.role = 'p1';
+  G.local = { turn: 'p1' };
+  G.revealShown = null; G.submittedIdx = null; finalAnimated = false;
+  G.room = {
+    v: 1, pin: null, state: 'playing', seed,
+    settings: { ...L.settings, modes: { ...L.settings.modes } },
+    players: { p1: { name: n1 }, p2: { name: n2 } },
+    game: freshGame(L.settings, seed),
+  };
+  keepAwake();
+  lHandoff('p1');
+};
+function lHandoff(turn) {
+  stopTimerLoop();
+  lastTickSec = null;
+  G.local.turn = turn;
+  $('handoff-name').textContent = G.room.players[turn].name;
+  showScreen('s-handoff');
+}
+$('btn-handoff-ok').onclick = () => {
+  const g = G.room.game;
+  g.round.startAt = now0(); // each player gets their own countdown in local mode
+  serverOffset = 0;
+  renderPlaying(G.room);
+};
+function lSubmit(v) {
+  const g = G.room.game;
+  g.round.ans[G.local.turn] = { v, t: now0() };
+  if (G.local.turn === 'p1') lHandoff('p2');
+  else lReveal();
+}
+function lTimeout() {
+  const g = G.room.game;
+  if (g.round.ans[G.local.turn] === undefined) {
+    toast('خلص الوقت! ⏰');
+    lSubmit(null);
+  }
+}
+function lReveal() {
+  const g = G.room.game, q = QINDEX[g.order[g.idx]];
+  const a1 = g.round.ans?.p1?.v ?? null, a2 = g.round.ans?.p2?.v ?? null;
+  const res = judge(q, a1, a2);
+  g.round.revealed = true; g.round.res = res;
+  g.score += res.pts; g.poss += 1;
+  g.streak = res.tier >= 1 ? g.streak + 1 : 0;
+  g.best = Math.max(g.best, g.streak);
+  if (res.tier >= 1) g.full++; else if (res.tier > 0) g.close++;
+  renderReveal(G.room);
+}
+function lNext() {
+  const g = G.room.game;
+  if (g.idx >= g.order.length - 1) { G.room.state = 'final'; renderFinal(G.room); return; }
+  g.idx++;
+  g.round = { qid: g.order[g.idx], startAt: 0, ans: {}, revealed: false, res: null };
+  lHandoff('p1');
+}
+function lRematch() {
+  const seed = (Date.now() % 2147483647) | 0;
+  G.room.seed = seed;
+  G.room.state = 'playing';
+  G.room.game = freshGame(G.room.settings, seed);
+  $('rewards-area').dataset.built = '';
+  lHandoff('p1');
+}
+
+/* ---------------- misc ---------------- */
+document.querySelectorAll('[data-back]').forEach(b => b.onclick = () => showScreen(b.dataset.back));
+$('inp-pin').addEventListener('input', e => { e.target.value = e.target.value.replace(/[^\d٠-٩]/g, '').replace(/[٠-٩]/g, d => String(d.charCodeAt(0) - 0x0660)).slice(0, 4); });
+document.querySelectorAll('.field').forEach(f => f.addEventListener('focus', () => setTimeout(() => f.scrollIntoView({ block: 'center', behavior: 'smooth' }), 250)));
+
+let wakeLock = null;
+async function keepAwake() {
+  try { wakeLock = await navigator.wakeLock?.request('screen'); } catch (e) {}
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') {
+    if (G.mode) keepAwake();
+    if (G.mode === 'online' && G.room) onRoom(G.room);
+  }
+});
+
+/* boot */
+(function boot() {
+  if (!FIREBASE_CONFIG) $('net-badge').textContent = '📴 الأونلاين غير مفعّل بعد';
+  refreshResume();
+  const qs = new URLSearchParams(location.search);
+  const pin = qs.get('pin');
+  if (pin && /^\d{4}$/.test(pin) && FIREBASE_CONFIG) {
+    $('inp-pin').value = pin;
+    if (localStorage.getItem('sm_name')) showScreen('s-join');
+  }
+})();
+</script>
+</body>
+</html>
